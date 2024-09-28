@@ -1,0 +1,298 @@
+.header-logo{
+    background-color: rgb(255, 255, 255);
+}
+
+/* styles.css */
+
+body {
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    box-sizing: border-box; /* Ensure consistent box sizing */
+}
+
+.header-logo {
+    background-color: white; /* Change to your desired background color */
+    position: fixed; /* Fix header to the top */
+    top: 0; /* No space above the header */
+    left: 0; /* Align to the left */
+    width: 100%; /* Full width */
+    z-index: 1000; /* Ensure it's above other content */
+    padding: 5px 0; /* Padding for the header */
+}
+
+.header-logo .container {
+    padding-left: 0; /* Ensure no padding on left */
+    padding-right: 0; /* Ensure no padding on right */
+}
+
+.header-logo .name {
+    color: black; /* Change text color as needed */
+}
+
+nav a.section {
+    color: black; /* Change link color */
+    margin-right: 20px; /* Spacing between links */
+}
+
+nav a.section:hover {
+    color: gray; /* Change color on hover */
+}
+
+
+.name{
+    color: black;
+    font-size: 20px;
+}
+
+.section:hover{
+    color:rgb(92, 92, 92);
+}
+
+.footer1{
+background-color: rgb(0, 0, 0);
+}
+
+.sub-sentence{
+    font-size: 25px;
+}
+
+.section1{
+    background-color: beige;
+    padding-top: 5%;
+}
+
+.heading{
+    font-size:50px;
+}
+
+.a{
+    color:black;
+    font-size: 50px;
+    text-align: center;
+}
+
+hr.animated-hr {
+    border-radius: 2px;
+    height: 6px;                  
+    background-color: #000000;    
+    width: 10%;                    
+    margin: 20px auto;             
+    transition: all 0.5s ease-in-out; 
+}
+
+hr.animated-hr:hover {                 
+    background-color: beige;      
+}
+
+.section1, .header-logo .p-4 {
+    transition: transform 0.3s ease; /* Smooth transition for scaling */
+}
+
+.section1:hover, 
+.header-logo .p-4:hover {
+ /* Scale up by 5% when hovered */
+    z-index: 10; /* Bring the hovered element above others */
+}
+
+.text-container {
+    transition: transform 0.3s ease; /* Smooth transition for scaling */
+}
+
+ .about-us{
+    text-align: center;
+    justify-content: center;
+    color:black;
+    background-color: beige;
+    padding-top: 3%;
+ }
+ .about-us-content{
+    font-size:20px;
+    padding-top: 10%;
+ }
+ .paragraph{
+    padding-left: 200px;
+    padding-right: 200px;
+    font-size: 20px;
+    padding-bottom: 5%;
+    font-family: sans-serif;
+ }
+ 
+
+.button {
+    background-color: black; /* Change button background color to black */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.button:hover {
+    background-color: #333; /* Darker shade on hover */
+}
+
+.text-container {
+    transition: transform 0.3s ease; /* Smooth transition for scaling */
+}
+
+.text-container:hover {
+    transform: scale(1.05); /* Scale the text up on hover */
+}
+
+
+
+/* General styles */
+.flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  /* Card styles */
+  .p-4 {
+    padding: 1rem;
+    width: 100%;
+    max-width: 33.33%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* Hover effect */
+  .p-4:hover {
+    transform: scale(1.1); /* Increase size on hover */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  }
+
+  /* Image container */
+  .w-23, .w-21 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .w-23 img, .w-21 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Title */
+  .text-lg {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Learn more link */
+  .text-black-500 {
+    color: #000000;
+  }
+
+  /* Add margin for learn more link */
+  .mt-3 {
+    margin-top: 1rem;
+  }
+
+  /* Main container */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Media query for responsiveness */
+  @media (max-width: 768px) {
+    .p-4 {
+      max-width: 100%;
+    }
+  }
+
+
+      /* General styles */
+      .flex-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+  
+      .text-center {
+        text-align: center;
+      }
+  
+      /* Horizontal line styling */
+      .animated-hr {
+        width: 50%;
+        margin: 0 auto;
+        border: none;
+        border-top: 2px solid #4a5568; /* Dark gray color */
+        transition: width 0.3s ease; /* Smooth width transition */
+      }
+  
+      /* Hover effect to expand the hr */
+      .animated-hr:hover {
+        width: 80%; /* Expands to 80% on hover */
+      }
+  
+      /* Card styles */
+      .p-4 {
+        padding: 1rem;
+        width: 100%;
+        max-width: 33.33%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+  
+      /* Image container */
+      .w-23, .w-21 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background-color: #e0e7ff;
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+  
+      .w-23 img, .w-21 img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+  
+      /* Title */
+      .text-lg {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+  
+      /* Learn more link */
+      .text-black-500 {
+        color: #000000;
+      }
+  
+      /* Add margin for learn more link */
+      .mt-3 {
+        margin-top: 1rem;
+      }
+  
+      /* Main container */
+      .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+  
+      /* Media query for responsiveness */
+      @media (max-width: 768px) {
+        .p-4 {
+          max-width: 100%;
+        }
+      }

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: system-ui, sans-serif; /* Updated font style */
+            position: relative;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+        }
+
+        /* Floating chat icon */
+        .chat-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #fff; /* White background for chat icon */
+            color: #000; /* Black icon color */
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Light shadow for visibility */
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .chat-icon:hover {
+            background-color: #ccc; /* Lighter gray on hover */
+            transform: scale(1.1);
+        }
+
+        /* Chatbox styles */
+        .chatbox {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 550px; /* Increased height */
+            background-color: #fff; /* Black background for chatbox */
+            color: #000; /* White text in chatbox */
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Light shadow */
+            border-radius: 10px;
+            overflow: hidden;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        /* Chat header */
+        .chat-header {
+            background-color: #000; /* White header */
+            color: #000; /* Black text for header */
+            padding: 10px;
+            text-align: left; /* Left-aligned header */
+            font-weight: bold; /* Bold header text */
+            font-size: 20px; /* Increased font size */
+        }
+
+        .chat-messages {
+            padding: 10px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background-color: #222; /* Darker background for message area */
+            color: black; /* White text for messages */
+        }
+
+        .chat-form {
+            display: flex;
+            padding: 10px;
+            background-color: #111; /* Dark background for input area */
+            color: #000;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #555; /* Gray border for input */
+            border-radius: 5px;
+            margin-right: 5px;
+            background-color: black; /* Dark input background */
+            color: white; /* Black text for better visibility */
+        }
+
+        /* Change the text color of the input field */
+        .chat-input {
+            color: #000; /* Black text for better visibility */
+        }
+
+        .chat-submit {
+            background-color: #fff; /* White button */
+            color: #000; /* Black text */
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .chat-submit:hover {
+            background-color: #ccc; /* Lighter button on hover */
+        }
+
+        /* Bot response style */
+        .bot-response {
+            font-weight: normal; /* Ensure response is not bold */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating chat icon -->
+    <button class="chat-icon" id="chatIcon">
+        <i class="fas fa-comment-dots"></i>
+    </button>
+
+    <!-- Chatbox -->
+    <div class="chatbox" id="chatbox">
+        <div class="chat-header">Askify</div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <form class="chat-form" id="chatForm">
+            <input type="text" name="message" class="chat-input" placeholder="Type your message" required>
+            <button type="submit" class="chat-submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        const chatIcon = document.getElementById('chatIcon');
+        const chatbox = document.getElementById('chatbox');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+    
+        // Toggle chatbox visibility
+        chatIcon.addEventListener('click', () => {
+            chatbox.style.display = chatbox.style.display === 'none' || chatbox.style.display === '' ? 'flex' : 'none';
+            if (chatbox.style.display === 'flex') {
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom when opened
+            }
+        });
+    
+        // Handle form submission
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent page reload
+            const userMessage = chatForm.message.value;
+            chatMessages.innerHTML += `<div class="message user"><strong>You:</strong> ${userMessage}</div>`;
+            chatForm.reset(); // Clear input field
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+    
+            // Send the userMessage to Flask backend
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userMessage })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const botResponse = data.response;
+    
+                // Split the bot response by line breaks
+                const responseLines = botResponse.split('\n');
+                
+                // Add the bot response starting with "Bot:" on one line, followed by the response on the next line(s)
+                chatMessages.innerHTML += `<div class="message bot"><strong>Askify:</strong><br><span class="bot-response">${responseLines.map(line => line.trim()).join('<br>')}</span></div>`;
+    
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                chatMessages.innerHTML += `<div class="message bot"><strong>Askify:</strong><br>Error communicating with server.</div>`;
+            });
+        });
+    </script>
+</body>
+</html>

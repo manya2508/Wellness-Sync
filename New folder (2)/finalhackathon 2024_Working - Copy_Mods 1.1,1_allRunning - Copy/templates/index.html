@@ -1,0 +1,459 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="static/styles.css">
+  <script src="https:cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Interface</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* General styles */
+    body {
+      font-family: system-ui, sans-serif;
+      /* Updated font style */
+      position: relative;
+      min-height: 100vh;
+      background-color: #f0f2f5;
+    }
+
+    /* Floating chat icon */
+    .chat-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #fff;
+      /* White background for chat icon */
+      color: #000;
+      /* Black icon color */
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+      /* Light shadow for visibility */
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .chat-icon:hover {
+      background-color: #ccc;
+      /* Lighter gray on hover */
+      transform: scale(1.1);
+    }
+
+    /* Chatbox styles */
+    .chatbox {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 350px;
+      height: 550px;
+      /* Increased height */
+      background-color: #000;
+      /* Black background for chatbox */
+      color: white;
+      /* White text in chatbox */
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+      /* Light shadow */
+      border-radius: 10px;
+      overflow: hidden;
+      flex-direction: column;
+      z-index: 1000;
+    }
+
+    /* Chat header */
+    .chat-header {
+      background-color: #fff;
+      /* White header */
+      color: #000;
+      /* Black text for header */
+      padding: 10px;
+      text-align: left;
+      /* Left-aligned header */
+      font-weight: bold;
+      /* Bold header text */
+      font-size: 20px;
+      /* Increased font size */
+    }
+
+    .chat-messages {
+      padding: 10px;
+      overflow-y: auto;
+      flex-grow: 1;
+      background-color: #222;
+      /* Darker background for message area */
+      color: white;
+      /* White text for messages */
+    }
+
+    .chat-form {
+      display: flex;
+      padding: 10px;
+      background-color: #111;
+      /* Dark background for input area */
+    }
+
+    .chat-input {
+      flex-grow: 1;
+      padding: 10px;
+      border: 1px solid #555;
+      /* Gray border for input */
+      border-radius: 5px;
+      margin-right: 5px;
+      background-color: #fff;
+      /* Dark input background */
+      color: #000;
+      /* White input text */
+    }
+
+    .chat-submit {
+      background-color: #fff;
+      /* White button */
+      color: #000;
+      /* Black text */
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .chat-submit:hover {
+      background-color: #ccc;
+      /* Lighter button on hover */
+    }
+
+    /* Bot response style */
+    .bot-response {
+      font-weight: normal;
+      /* Ensure response is not bold */
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header-logo">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <a class="flex title-font font-medium items-center text-white mb-4 md:mb-0" href="{{ url_for('index') }}">
+        <img src="static/images/logo.jpeg" alt="Wellness Sync Logo" class="w-10 h-10 rounded-full">
+        <span class="name">&nbsp;Wellness Sync</span>
+      </a>
+      <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        <a class="section" href="{{ url_for('index') }}"><b>Dashboard</b></a>&nbsp;&nbsp;&nbsp;
+        <a class="section" href="/"><b>Health Tracker</b></a>&nbsp;&nbsp;&nbsp;
+        <!-- Updated -->
+        <a class="section" href="{{ url_for('community') }}"><b>Community</b></a>&nbsp;&nbsp;&nbsp;
+        <!-- Community Link -->
+        <a class="section" href="/"><b>Medical</b></a>&nbsp;&nbsp;&nbsp; <!-- Updated -->
+
+        {% if session.get('username') %}
+        <a class="section" href="{{ url_for('logout') }}" id="logout_button"><b>Logout</b></a>&nbsp;&nbsp;&nbsp;
+        {% else %}
+        <a class="section" href="{{ url_for('login') }}" id="login_button"><b>Login</b></a>&nbsp;&nbsp;&nbsp;
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+
+  <section class="section1">
+    <div class="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+      <div
+        class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
+        <div class="text-container"> <!-- New wrapper div -->
+          <h1 class="heading">Make Eating Fun with Wellness Sync!</h1>
+          <p class="sub-sentence">Share your problems with our AI Askify!</p><br>
+        </div>
+        <div class="flex w-full md:justify-start justify-center items-end">
+        </div>
+      </div>
+      <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
+        <img class="object-cover object-center rounded transition-transform transform hover:scale-110 duration-500"
+          alt="hero" src="static/images/dashboard-img1.jpg">
+      </div>
+    </div>
+  </section>
+
+
+  <section class="text-gray-600 body-font">
+    <div class="container px-5 py-24 mx-auto">
+      <div class="text-center mb-20">
+        <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900 mb-4">Take Care of Your Health!</h1>
+        <hr class="animated-hr">
+      </div>
+      <div class="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4 md:space-y-0 space-y-6">
+        <div class="p-4 md:w-1/3 flex flex-col text-center items-center">
+          <div
+            class="w-23 h-23 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-5 flex-shrink-0">
+            <img src="static/images/heartbeat.jpeg">
+          </div>
+          <div class="flex-grow">
+            <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Track Your Heartbeat!</h2>
+            <p class="leading-relaxed text-base">Our website offers a comprehensive platform for tracking your health
+              and wellness journey, empowering you to monitor key metrics such as fitness activities, nutrition, sleep,
+              and more.</p>
+            <a class="mt-3 text-black-500 inline-flex items-center" href="health-tracker.html"><b>Learn More</b>
+              <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                class="w-4 h-4 ml-2" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="p-4 md:w-1/3 flex flex-col text-center items-center">
+          <div
+            class="w-21 h-21 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-5 flex-shrink-0">
+            <img src="static/images/chatbot.jpeg">
+          </div>
+          <div class="flex-grow">
+            <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Talk with Askify!</h2>
+            <p class="leading-relaxed text-base">Our website features Askify, an intelligent chatbot designed to assist
+              users with their health and wellness queries. Askify is always available to provide real-time support,
+              making it easier for you to stay informed and on track with your wellness journey.</p>
+            <a class="mt-3 text-black-500 inline-flex items-center" href="askify.html"><b>Learn More</b>
+              <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                class="w-4 h-4 ml-2" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="p-4 md:w-1/3 flex flex-col text-center items-center">
+          <div
+            class="w-21 h-21 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-5 flex-shrink-0">
+            <img src="static/images/stetoscope.jpeg">
+          </div>
+          <div class="flex-grow">
+            <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Sends Emergency Alerts!</h2>
+            <p class="leading-relaxed text-base">Our website offers a vital emergency alert feature that sends instant
+              notifications to designated relatives in the event of a health emergency. The emergency alert service
+              enhances safety and ensures that help is never far away when it's needed most.</p>
+            <a class="mt-3 text-black-500 inline-flex items-center" href="emergency-alerts.html"><b>Learn More</b>
+              <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                class="w-4 h-4 ml-2" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="about-us">
+      <h2 style="font-size:50px;">About Us</h2>
+      <hr class="animated-hr">
+      <p class="paragraph">Wellness Sync empowers users on their health journey by offering tailored solutions that
+        cater to individual needs and preferences. Key features include personalized health tracking, AI-powered
+        consultations for advice and resources, customized meal planning, and fitness programs that adapt to users’
+        goals. Additionally, it fosters community support through forums and expert-led workshops, while providing a
+        resource hub filled with articles and tools on various wellness topics. The site aims to engage individuals
+        seeking to improve their physical and mental well-being, helping them achieve their wellness goals through
+        personalized resources, community interaction, and expert guidance.</p>
+    </div>
+  </section>
+
+
+  <section class="text-gray-600 body-font relative">
+    <div class="container px-5 py-24 mx-auto">
+      <div class="flex flex-col text-center w-full mb-12">
+        <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Contact Us</h1>
+        <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Whatever cardigan tote bag tumblr hexagon brooklyn
+          asymmetrical gentrify.</p>
+      </div>
+
+
+      <!-- Contact Us Form -->
+      <form id="contactForm" method="POST" action="{{ url_for('submit_contact') }}">
+        <div class="lg:w-1/2 md:w-2/3 mx-auto">
+          <div class="flex flex-wrap -m-2">
+            <div class="p-2 w-1/2">
+              <div class="relative">
+                <label for="name" class="leading-7 text-sm text-gray-600">Name</label>
+                <input type="text" id="name" name="name" required
+                  class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300">
+              </div>
+            </div>
+            <div class="p-2 w-1/2">
+              <div class="relative">
+                <label for="email" class="leading-7 text-sm text-gray-600">Email</label>
+                <input type="email" id="email" name="email" required
+                  class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300">
+              </div>
+            </div>
+            <div class="p-2 w-full">
+              <div class="relative">
+                <label for="message" class="leading-7 text-sm text-gray-600">Message</label>
+                <textarea id="message" name="message" required
+                  class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 h-32"></textarea>
+              </div>
+            </div>
+            <div class="p-2 w-full">
+              <button type="submit"
+                class="flex mx-auto text-white bg-black border-0 py-2 px-8 focus:outline-none rounded">Send</button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Popup Message -->
+      <div id="popupMessage"
+        style="display: none; position: fixed; top: 20px; right: 20px; background: green; color: white; padding: 10px; border-radius: 5px;">
+        Successfully Sent!
+      </div>
+
+      <script>
+        function validateForm() {
+          const name = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const message = document.getElementById('message').value;
+
+          if (name === '' || email === '' || message === '') {
+            showPopup("Please fill in all fields.");
+            return false; // Prevent form submission
+          }
+
+          // Show success message and clear inputs
+          showPopup("Successfully Sent!");
+          document.getElementById('name').value = '';
+          document.getElementById('email').value = '';
+          document.getElementById('message').value = '';
+          return true; // Allow form submission
+        }
+
+        function showPopup(message) {
+          const popup = document.getElementById('popupMessage');
+          popup.innerHTML = message;
+          popup.style.display = 'block';
+
+          setTimeout(() => {
+            popup.style.display = 'none';
+          }, 3000); // Hide after 3 seconds
+        }
+      </script>
+
+
+    </div>
+  </section>
+
+  <button class="chat-icon" id="chatIcon">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+
+  <!-- Chatbox -->
+  <div class="chatbox" id="chatbox">
+    <div class="chat-header">Askify</div>
+    <div class="chat-messages" id="chatMessages">
+      <!-- Chat messages will be displayed here -->
+    </div>
+    <form class="chat-form" id="chatForm">
+      <input type="text" name="message" class="chat-input" placeholder="Type your message" required>
+      <button type="submit" class="chat-submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const chatIcon = document.getElementById('chatIcon');
+    const chatbox = document.getElementById('chatbox');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+
+    // Toggle chatbox visibility
+    chatIcon.addEventListener('click', () => {
+      chatbox.style.display = chatbox.style.display === 'none' || chatbox.style.display === '' ? 'flex' : 'none';
+      if (chatbox.style.display === 'flex') {
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom when opened
+      }
+    });
+
+    // Handle form submission
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // Prevent page reload
+      const userMessage = chatForm.message.value;
+      chatMessages.innerHTML += `<div class="message user"><strong>You:</strong> ${userMessage}</div>`;
+      chatForm.reset(); // Clear input field
+      chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+
+      // Send the userMessage to Flask backend
+      fetch('/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage })
+      })
+        .then(response => response.json())
+        .then(data => {
+          const botResponse = data.response;
+
+          // Split the bot response by line breaks
+          const responseLines = botResponse.split('\n');
+
+          // Add the bot response starting with "Bot:" on one line, followed by the response on the next line(s)
+          chatMessages.innerHTML += `<div class="message bot"><strong>Askify:</strong><br><span class="bot-response">${responseLines.map(line => line.trim()).join('<br>')}</span></div>`;
+
+          chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          chatMessages.innerHTML += `<div class="message bot"><strong>Askify:</strong><br>Error communicating with server.</div>`;
+        });
+    });
+  </script>
+
+  <footer class="footer1">
+    <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
+      <!-- Replace SVG with Image Logo in Footer -->
+      <a class="flex title-font font-medium items-center md:justify-start justify-center text-white" href="/">
+        <img src="static/images/logo.jpeg" alt="Wellness Sync Logo" class="w-10 h-10 rounded-full">
+        <span class="ml-3 text-xl">Wellness Sync</span>
+      </a>
+      <p class="text-sm text-gray-400 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-800 sm:py-2 sm:mt-0 mt-4">
+        © 2024 Wellness Sync - @wellness_sync
+      </p>
+      <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
+        <!-- Social Media Links -->
+        <a href="https://www.facebook.com/wellnesssync" class="text-gray-400" target="_blank">
+          <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5"
+            viewBox="0 0 24 24">
+            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+          </svg>
+        </a>
+
+        <a href="https://twitter.com/wellness_sync" class="ml-3 text-gray-400" target="_blank">
+          <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5"
+            viewBox="0 0 24 24">
+            <path
+              d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z">
+            </path>
+          </svg>
+        </a>
+        <!-- Instagram -->
+        <a href="https://www.instagram.com/wellnesssync" class="ml-3 text-gray-400" target="_blank">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            class="w-5 h-5" viewBox="0 0 24 24">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+          </svg>
+        </a>
+        <!-- LinkedIn -->
+        <a href="https://www.linkedin.com/company/wellnesssync" class="ml-3 text-gray-400" target="_blank">
+          <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"
+            class="w-5 h-5" viewBox="0 0 24 24">
+            <path stroke="none"
+              d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+            <circle cx="4" cy="4" r="2" stroke="none"></circle>
+          </svg>
+        </a>
+      </span>
+    </div>
+  </footer>
+</body>
+
+</html>

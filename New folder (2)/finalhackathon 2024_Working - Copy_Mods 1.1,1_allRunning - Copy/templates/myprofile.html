@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="static/styles.css">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: beige;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            padding: 30px;
+        }
+
+        .col-left,
+        .col-middle,
+        .col-right {
+            padding: 20px;
+        }
+
+        .col-left {
+            width: 25%;
+            border-right: 2px solid #ddd;
+            text-align: center;
+        }
+
+        .col-left img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .col-left span {
+            display: block;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .col-middle {
+            width: 50%;
+            border-right: 2px solid #ddd;
+            padding-left: 15px;
+            padding-right: 37px;
+        }
+
+        .col-right {
+            width: 25%;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #BA68C8;
+        }
+
+        .profile-button {
+            background-color: beige;
+            border: none;
+            color: black;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .profile-button:hover {
+            background-color: rgb(249, 249, 200);
+        }
+
+        .add-experience {
+            background-color: #BA68C8;
+            color: white;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .labels {
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header-logo">
+        <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+            <a class="flex title-font font-medium items-center text-white mb-4 md:mb-0" href="{{ url_for('index') }}">
+                <img src="static/images/logo.jpeg" alt="Wellness Sync Logo" class="w-10 h-10 rounded-full">
+                <span class="name">&nbsp;Wellness Sync</span>
+            </a>
+            <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+                <a class="section" href="{{ url_for('index') }}"><b>Dashboard</b></a>&nbsp;&nbsp;&nbsp;
+                <a class="section" href="/"><b>Health Tracker</b></a>&nbsp;&nbsp;&nbsp;
+                <!-- Updated -->
+                <a class="section" href="{{ url_for('community') }}"><b>Community</b></a>&nbsp;&nbsp;&nbsp;
+                <!-- Community Link -->
+                <a class="section" href="/"><b>Medical</b></a>&nbsp;&nbsp;&nbsp; <!-- Updated -->
+
+                {% if session.get('username') %}
+                <form action="{{ url_for('logout') }}" method="POST" style="display:inline;">
+                    <button type="submit" class="section"><b>Logout</b></button>
+                </form>&nbsp;&nbsp;&nbsp;
+                {% else %}
+                <a class="section" href="{{ url_for('login') }}" id="login_button"><b>Login</b></a>&nbsp;&nbsp;&nbsp;
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <div class="container rounded bg-white">
+        <div class="col-left">
+            <form id="profile-pic-form">
+                <label for="profile-picture">
+                    <img id="profile-image"
+                        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
+                        alt="Profile Picture" />
+                </label>
+                <input type="file" id="profile-picture" style="display: none;" accept="image/*" />
+            </form>
+            <span class="font-weight-bold">{{ username }}</span> <!-- Display the username -->
+        </div>
+        <div class="col-middle">
+            <h4>Profile Settings</h4>
+            <div class="form-group">
+                <label class="labels">Name</label>
+                <input type="text" class="form-control" placeholder="First Name">
+            </div>
+            <div class="form-group">
+                <label class="labels">Surname</label>
+                <input type="text" class="form-control" placeholder="Surname">
+            </div>
+            <div class="form-group">
+                <label class="labels">Mobile Number</label>
+                <input type="text" class="form-control" placeholder="Enter Phone Number">
+            </div>
+            <div class="form-group">
+                <label class="labels">Age</label>
+                <input type="text" class="form-control" placeholder="Enter Age">
+            </div>
+            <div class="form-group">
+                <label class="labels">Gender</label>
+                <input type="text" class="form-control" placeholder="Enter Gender">
+            </div>
+            <div class="form-group">
+                <label class="labels">Medical History</label>
+                <input type="text" class="form-control" placeholder="Enter Medical History">
+            </div>
+            <div class="form-group">
+                <label class="labels">Future Goals</label>
+                <input type="text" class="form-control" placeholder="Enter Future Goals">
+            </div>
+            <button class="profile-button" type="button">Save Profile</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('profile-picture').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('profile-image').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+    <footer class="footer1">
+        <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
+            <a class="flex title-font font-medium items-center md:justify-start justify-center text-white" href="/">
+                <img src="static/images/logo.jpeg" alt="Wellness Sync Logo" class="w-10 h-10 rounded-full">
+                <span class="ml-3 text-xl">Wellness Sync</span>
+            </a>
+            <p class="text-sm text-gray-400 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-800 sm:py-2 sm:mt-0 mt-4">
+                © 2024 Wellness Sync - @wellness_sync
+            </p>
+            <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
+                <a href="https://www.facebook.com/wellnesssync" class="text-gray-400" target="_blank">
+                    <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        class="w-5 h-5" viewBox="0 0 24 24">
+                        <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                    </svg>
+                </a>
+                <a href="https://twitter.com/wellness_sync" class="ml-3 text-gray-400" target="_blank">
+                    <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        class="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                            d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z">
+                        </path>
+                    </svg>
+                </a>
+                <a href="https://www.instagram.com/wellnesssync" class="ml-3 text-gray-400" target="_blank">
+                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/company/wellnesssync" class="ml-3 text-gray-400" target="_blank">
+                    <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
+                        <path stroke="none"
+                            d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z">
+                        </path>
+                        <circle cx="4" cy="4" r="2" stroke="none"></circle>
+                    </svg>
+                </a>
+            </span>
+        </div>
+    </footer>
+</body>
+
+</html>
